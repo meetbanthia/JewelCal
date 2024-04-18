@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jewellery Cost Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            color: #000;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 50%;
+            margin-bottom: 20px;
+        }
+
+        th,
+        td {
+            border: 1px solid #000;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #000;
+            color: #fff;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .delete-row {
+            background-color: red;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        #finalPrice {
+            color: green;
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <h2 style="color: blue;">Jewellery Cost Calculator</h2>
+
+    <label for="makingCostperGram">Making Cost per gram:</label>
+    <input type="number" id="makingCostperGram" value=750 required><br><br>
+
+    <table id="jewelryTable">
+        <tr>
+            <th style="color: burlywood;">Category</th>
+            <th style="color: burlywood;">Weight</th>
+            <th style="color: burlywood;">Rate</th>
+            <th style="color: burlywood;">Category Price</th>
+        </tr>
+        <tr>
+            <th style="color: gold;">Gold(Grams)</th>
+            <td><input type="number" class="gold-weight" value=1 required></td>
+            <td><input type="number" class="gold-rate" value=6421 required></td>
+            <td class="gold-price">-</td>
+        </tr>
+        <tr>
+            <th style="color: white;">Diamond(Carats)</th>
+            <td><input type="number" class="diamond-weight" value=1 required></td>
+            <td><input type="number" class="diamond-rate" value=12000 required></td>
+            <td class="diamond-price">-</td>
+        </tr>
+    </table>
+
+    <button id="addRowBtn" onclick="addRow()">Add Stone Row</button>
+
+    <button onclick="calculatePrice()">Calculate Price</button>
+
+    <div id="makingCost" class="hidden"></div>
+    <div id="finalPrice" class="hidden"></div>
+
+    <script>
+        function addRow() {
+            var table = document.getElementById('jewelryTable');
+            var newRow = table.insertRow(-1);
+            var rowName = prompt("Enter the stone name:");
+            newRow.innerHTML = `
+                <th style="color : pink;">${rowName}</th>
+                <td><input type="number" class="stone-weight" placeholder="weight" required></td>
+                <td><input type="number" class="stone-rate" placeholder="rate" required></td>
+                <td class="stone-price">-</td>
+                <td><button class="delete-row" onclick="deleteRow(this)">X</button></td>
+            `;
+        }
+
+        function deleteRow(btn) {
+            var row = btn.parentNode.parentNode;
+            row.parentNode.removeChild(row);
+        }
+
+        function calculatePrice() {
+            var makingCostperGram = parseFloat(document.getElementById('makingCostperGram').value);
+            var goldWeight = parseFloat(document.querySelector('.gold-weight').value);
+            var goldRate = parseFloat(document.querySelector('.gold-rate').value);
+            var goldPrice = goldWeight * goldRate;
+            document.querySelector('.gold-price').textContent = goldPrice.toFixed(2);
+
+            var diamondWeight = parseFloat(document.querySelector('.diamond-weight').value);
+            var diamondRate = parseFloat(document.querySelector('.diamond-rate').value);
+            var diamondPrice = diamondWeight * diamondRate;
+            document.querySelector('.diamond-price').textContent = diamondPrice.toFixed(2);
+
+            var stoneWeights = document.querySelectorAll('.stone-weight');
+            var stoneRates = document.querySelectorAll('.stone-rate');
+            var stonePrices = document.querySelectorAll('.stone-price');
+            var totalStonePrice = 0;
+
+            for (var i = 0; i < stoneWeights.length; i++) {
+                var stoneWeight = parseFloat(stoneWeights[i].value);
+                var stoneRate = parseFloat(stoneRates[i].value);
+                var stonePrice = stoneWeight * stoneRate;
+                stonePrices[i].textContent = stonePrice.toFixed(2);
+                totalStonePrice += stonePrice;
+            }
+
+            var makingCost = makingCostperGram * goldWeight;
+            var totalPrice = goldPrice + diamondPrice + totalStonePrice + makingCost;
+
+            
+            var makingCostElement = document.getElementById('makingCost');
+            makingCostElement.innerHTML = "<br>Making Cost: Rs " + makingCost.toFixed(2);
+            makingCostElement.classList.remove('hidden');
+
+            var finalPriceElement = document.getElementById('finalPrice');
+            finalPriceElement.innerHTML = "<br>Total Price: Rs " + totalPrice.toFixed(2);
+            finalPriceElement.classList.remove('hidden');
+        }
+    </script>
+</body>
+
+</html>
